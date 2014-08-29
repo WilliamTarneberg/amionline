@@ -9,13 +9,27 @@ def main(argv):
     os_type = platform.system()
     targets = ["www.apple.com", "www.google.com"]
     nbr_pings = 1
-    inter_ping = 10
+    inter_ping = 10 #sec
+    plot_length = 200
 
-    plt.ion()
-    ax1 = plt.axes()
+    y_max = -1
 
     x_data = []
     y_data = []
+
+    plt.ion()
+    plt.grid()
+    plt.tick_params(\
+    	axis='x',
+    	which='both',
+    	bottom='off',
+    	top='off',
+    	labelbottom='off')  
+    plt.ylabel('ms')
+
+    plt.rcParams['toolbar'] = 'None'
+
+    line, = plt.plot(y_data)
 
     ping_func = ping_unix
     
@@ -34,11 +48,20 @@ def main(argv):
 
 	    y_data.append(average)
 
-	    plt.plot(x_data,y_data)
-	    plt.draw()
+	    if average > y_max:
+	    	y_max = average
 
-	    print x_data
-	    print y_data
+	    if len(y_data) > plot_length:
+	    	del y_data[0]
+	    	del x_data[0]
+
+	    plt.ylim([0,y_max+5])
+	    plt.xlim(min(x_data),max(x_data))
+
+	    line.set_xdata(x_data)
+	    line.set_ydata(y_data)
+
+	    plt.draw()
 
 	    time.sleep(inter_ping)
 
