@@ -3,18 +3,27 @@ import subprocess
 import platform
 import sys
 import time
+from matplotlib import pyplot as plt
 
 def main(argv):
     os_type = platform.system()
     targets = ["www.apple.com", "www.google.com"]
     nbr_pings = 1
-    inter_ping = 30
+    inter_ping = 10
 
+    plt.ion()
+    ax1 = plt.axes()
+
+    x_data = []
+    y_data = []
+
+    ping_func = ping_unix
+    
     while True:
 	    average = -3.0
 
-	    ping_func = ping_unix
-
+	    x_data.append(time.time())
+	    
 	    if os_type.lower() in ["windows"]:
 	    	ping_func = ping_win
 	    else:
@@ -23,7 +32,13 @@ def main(argv):
 	    for target in targets:
 	    	average = average + ping_func(target,nbr_pings)/len(targets)
 
-	    print average
+	    y_data.append(average)
+
+	    plt.plot(x_data,y_data)
+	    plt.draw()
+
+	    print x_data
+	    print y_data
 
 	    time.sleep(inter_ping)
 
