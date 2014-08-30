@@ -34,7 +34,7 @@ def main(argv):
 	    for target in targets:
 	    	average = average + ping_func(target,nbr_pings)/len(targets)
 
-	    y_data.append(average)
+	    y_data.append(float(average))
 
 	    if average > y_max:
 	    	y_max = average
@@ -59,7 +59,8 @@ def ping_unix(target,nbr_pings):
 	    ping = subprocess.Popen(["ping", "-n", "-c",str(nbr_pings), target], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	    out, error = ping.communicate()
 	    if out:
-	    	temp = out.split("min/avg/max/stddev = ",1)[1]
+			#temp = out.split("min/avg/max/mdev = ",1)[1]    # Debian
+	    	temp = out.split("min/avg/max/stddev = ",1)[1]  #Darwin
 	    	average = temp.split("/")[1]
 
 	except subprocess.CalledProcessError:
@@ -70,6 +71,9 @@ def ping_unix(target,nbr_pings):
 class ASCIIChart:
 	y_max = 50
 	y_min = 0
+	x = -1
+	y = -1
+	thresh = -1
 
 	def __init__(self,x,y):
 		self.x = x
@@ -80,16 +84,16 @@ class ASCIIChart:
 	description = "ASCII Chart"
 	author = "William Tarneberg"
 
-	def renderGraph(y_data):
+	def renderGraph(*y_data):
 		index = 4
 
 		for value in reversed(y_data):
-			if value > ASCIIChart.y_max:
-				ASCIIChart.y_max = value + 5
-				self.thresh = ASCIIChart.y_max/self.y
+			if value[0] > ASCIIChart.y_max:
+				y_max = value[0] + 5
+				thresh = y_max / self.y
 
-			y_corr = value/self.thresh
-			self.chart_map[index][y_corr] = '*'
+			y_corr = value[0]/ASCIIChart.thresh
+			ASCIIChart.chart_map[index][y_corr] = '*'
 			value +1
 
 		print chart_map
