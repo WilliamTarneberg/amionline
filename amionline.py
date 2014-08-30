@@ -12,24 +12,12 @@ def main(argv):
     inter_ping = 10 #sec
     plot_length = 200
 
+    achart = ASCIIChart(10,5)
+
     y_max = -1
 
     x_data = []
     y_data = []
-
-    plt.ion()
-    plt.grid()
-    plt.tick_params(\
-    	axis='x',
-    	which='both',
-    	bottom='off',
-    	top='off',
-    	labelbottom='off')  
-    plt.ylabel('ms')
-
-    plt.rcParams['toolbar'] = 'None'
-
-    line, = plt.plot(y_data)
 
     ping_func = ping_unix
     
@@ -55,13 +43,9 @@ def main(argv):
 	    	del y_data[0]
 	    	del x_data[0]
 
-	    plt.ylim([0,y_max+5])
-	    plt.xlim(min(x_data),max(x_data))
+	    print y_data
 
-	    line.set_xdata(x_data)
-	    line.set_ydata(y_data)
-
-	    plt.draw()
+	    achart.renderGraph(y_data)
 
 	    time.sleep(inter_ping)
 
@@ -82,6 +66,33 @@ def ping_unix(target,nbr_pings):
 	    average = -2.0
 
 	return float(average)
+
+class ASCIIChart:
+	y_max = 50
+	y_min = 0
+
+	def __init__(self,x,y):
+		self.x = x
+		self.y = y
+		self.chart_map = [[' ' for x in xrange(x+1)] for x in xrange(y+4)] 
+		self.thresh = self.y_max/self.y
+
+	description = "ASCII Chart"
+	author = "William Tarneberg"
+
+	def renderGraph(y_data):
+		index = 4
+
+		for value in reversed(y_data):
+			if value > ASCIIChart.y_max:
+				ASCIIChart.y_max = value + 5
+				self.thresh = ASCIIChart.y_max/self.y
+
+			y_corr = value/self.thresh
+			self.chart_map[index][y_corr] = '*'
+			value +1
+
+		print chart_map
 
 if __name__ == "__main__":
 	main(sys.argv)
