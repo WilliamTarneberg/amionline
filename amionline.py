@@ -3,7 +3,7 @@ import subprocess
 import platform
 import sys
 import time
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 
 def main(argv):
     os_type = platform.system()
