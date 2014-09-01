@@ -1,0 +1,4 @@
+0,15,30,45 * * * * sh /home/pi/ping.sh
+5,20,35,50 * * * * gnuplot /home/pi/ping.gnu
+
+
